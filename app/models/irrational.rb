@@ -13,5 +13,6 @@
 class Irrational < ActiveRecord::Base
   has_many :fractions
   has_many :pi_fractions
+  has_many :sqrt_fractions
   validates_presence_of :input
 end

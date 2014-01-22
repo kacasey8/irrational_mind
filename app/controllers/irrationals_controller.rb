@@ -29,6 +29,7 @@ class IrrationalsController < ApplicationController
     set_exact
     implant_fractions(Fraction, @irrational.input.frac, 10000)
     implant_fractions(PiFraction, @irrational.input/Math::PI, 10000)
+    implant_sqrt
     respond_to do |format|
       if @irrational.save
         format.html { redirect_to @irrational, notice: 'Irrational was successfully created.' }
@@ -47,7 +48,8 @@ class IrrationalsController < ApplicationController
       if @irrational.update(irrational_params)
         set_exact
         implant_fractions(Fraction, @irrational.input.frac, 10000)
-        implant_fractions(PiFraction, @irrational.input/Math::PI, 10000)
+        implant_fractions(PiFraction, @irrational.input/Math::PI, 1000)
+        implant_sqrt
         format.html { redirect_to @irrational, notice: 'Irrational was successfully updated.' }
         format.json { head :no_content }
       else
@@ -77,13 +79,9 @@ class IrrationalsController < ApplicationController
 
   def implant_fractions(model, value, max_iterations)
     model.where(irrational_id: @irrational.id).delete_all # clear out potentially old data
-    min_rational = 0.to_r
-    min_tolerance = (min_rational - value).abs
-    current_numerator = min_rational.numerator
-    current_denominator = min_rational.denominator
-
-    min_numerator = min_rational.numerator
-    min_denominator = min_rational.denominator
+    min_tolerance = 0.1
+    current_numerator = 0
+    current_denominator = 1
     current_test = current_numerator.to_f/current_denominator
     seen_significance = -1
     (1..max_iterations).each do
@@ -95,16 +93,50 @@ class IrrationalsController < ApplicationController
       current_test = current_numerator.to_f/current_denominator
       test_tolerance = (current_test - value).abs.to_d
       if test_tolerance < min_tolerance # found a closer value
-        min_rational = current_test
         min_tolerance = test_tolerance
-        min_numerator = current_numerator
-        min_denominator = current_denominator
         sign, significant_digits, base, exponent = test_tolerance.split
         if significant_digits == "0"  # perfect match
-          return model.create(numerator: min_numerator, denominator: min_denominator, error: min_tolerance, irrational_id: @irrational.id)
+          return model.create(numerator: current_numerator, denominator: current_denominator, error: min_tolerance, irrational_id: @irrational.id)
         elsif exponent < seen_significance # a match on a better magnitude, record this fit
-          model.create(numerator: min_numerator, denominator: min_denominator, error: min_tolerance, irrational_id: @irrational.id)
+          model.create(numerator: current_numerator, denominator: current_denominator, error: min_tolerance, irrational_id: @irrational.id)
           seen_significance = exponent
+        end
+      end
+    end
+  end
+
+  def implant_sqrt
+    max_iterations = 100
+    max_inner = 100
+
+    SqrtFraction.where(irrational_id: @irrational.id).delete_all # clear out potentially old data
+    model = SqrtFraction
+
+    min_tolerance = 0.1
+    seen_significance = -1
+    (2..max_iterations).each do |root_test|
+      current_numerator = 0
+      current_denominator = 1
+      root_value = Math.sqrt(root_test)
+      match_value = @irrational.input/root_value
+      current_test = current_numerator.to_f/current_denominator
+      (1..max_inner).each do
+        if current_test < match_value
+          current_numerator += 1
+        else
+          current_denominator += 1
+        end
+        current_test = current_numerator.to_f/current_denominator
+        test_tolerance = (current_test - match_value).abs.to_d
+        if test_tolerance < min_tolerance # found a closer value
+          min_tolerance = test_tolerance
+          sign, significant_digits, base, exponent = test_tolerance.split
+          if significant_digits == "0"  # perfect match
+            return model.create(root: root_test, numerator: current_numerator, denominator: current_denominator, error: min_tolerance, irrational_id: @irrational.id)
+          elsif exponent < seen_significance # a match on a better magnitude, record this fit
+            model.create(root: root_test, numerator: current_numerator, denominator: current_denominator, error: min_tolerance, irrational_id: @irrational.id)
+            seen_significance = exponent
+          end
         end
       end
     end

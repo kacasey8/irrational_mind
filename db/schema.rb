@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140122190819) do
+ActiveRecord::Schema.define(version: 20140122194014) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -40,6 +40,16 @@ ActiveRecord::Schema.define(version: 20140122190819) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "irrational_id"
+  end
+
+  create_table "sqrt_fractions", force: true do |t|
+    t.integer  "irrational_id"
+    t.integer  "numerator"
+    t.integer  "denominator"
+    t.decimal  "error"
+    t.integer  "root"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
 end

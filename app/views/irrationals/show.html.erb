@@ -28,7 +28,22 @@
     <dd>
       <sup><%= fraction.numerator %></sup>
       &frasl;
-      <sub><%= fraction.denominator %></sub>&pi;
+      <sub><%= fraction.denominator %></sub>&nbsp;&pi;
+      <% sign, significant_digits, base, exponent = fraction.error.split %>
+      <% unless significant_digits == "0" %>
+        <span style='padding-left: 20px;'>Error: <%= base %><sup><%= exponent %></sup></span>
+      <% end %>
+    </dd>
+  <% end %>
+
+  <dt><strong><%= model_class.human_attribute_name(:sqrt_fractions) %>:</strong></dt>
+  <% @irrational.sqrt_fractions.each do |fraction| %>
+    <dd>
+      <% unless fraction.denominator == 1 && fraction.numerator == 1 %>
+        <sup><%= fraction.numerator %></sup>
+        &frasl;<sub><%= fraction.denominator %></sub>
+      <% end %>
+      &nbsp;&radic;<span style="text-decoration:overline;">&nbsp;<%= fraction.root %>&nbsp;</span>
       <% sign, significant_digits, base, exponent = fraction.error.split %>
       <% unless significant_digits == "0" %>
         <span style='padding-left: 20px;'>Error: <%= base %><sup><%= exponent %></sup></span>
