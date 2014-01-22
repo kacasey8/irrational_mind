@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140122063501) do
+ActiveRecord::Schema.define(version: 20140122071057) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -36,10 +36,10 @@ ActiveRecord::Schema.define(version: 20140122063501) do
 
   create_table "irrationals", force: true do |t|
     t.decimal  "input"
-    t.integer  "exact_numerator"
-    t.integer  "exact_denominator"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.decimal  "exact_numerator"
+    t.decimal  "exact_denominator"
   end
 
 end

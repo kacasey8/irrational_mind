@@ -7,11 +7,20 @@
   <dt><strong><%= model_class.human_attribute_name(:input) %>:</strong></dt>
   <dd><%= @irrational.input %></dd>
   <dt><strong>Exact Value:</strong></dt>
-  <dd><%= @irrational.exact_numerator %>/<%= @irrational.exact_denominator %></dd>
+  <dd><%= @irrational.exact_numerator.to_i %>/<%= @irrational.exact_denominator.to_i %></dd>
 
   <dt><strong><%= model_class.human_attribute_name(:fractions) %>:</strong></dt>
   <% @irrational.fractions.each do |fraction| %>
-  	<dd><%= fraction.numerator %>/<%= fraction.denominator %></dd>
+    <dd>
+      <%= @irrational.input.to_i %> 
+      <sup><%= fraction.numerator %></sup>
+      &frasl;
+      <sub><%= fraction.denominator %></sub>
+      <% sign, significant_digits, base, exponent = fraction.error.split %>
+      <% unless significant_digits == "0" %>
+        <span style='padding-left: 20px;'>Error: <%= base %><sup><%= exponent %></sup></span>
+      <% end %>
+    </dd>
   <% end %>
 </dl>
 

@@ -4,10 +4,10 @@
 #
 #  id                :integer          not null, primary key
 #  input             :decimal(, )
-#  exact_numerator   :integer
-#  exact_denominator :integer
 #  created_at        :datetime
 #  updated_at        :datetime
+#  exact_numerator   :decimal(, )
+#  exact_denominator :decimal(, )
 #
 
 class Irrational < ActiveRecord::Base

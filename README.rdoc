@@ -7,5 +7,7 @@ numbers.
 As an example the ideal behavior would be to convert something like 
 0.39269908169 => pi/8
 
+The current app is available for usage at http://irrational-mind.herokuapp.com/
+
 Please feel free to use a different markup language if you do not plan to run
 <tt>rake doc:app</tt>.

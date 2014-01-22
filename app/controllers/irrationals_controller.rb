@@ -82,7 +82,7 @@ class IrrationalsController < ApplicationController
 
     min_numerator = min_rational.numerator
     min_denominator = min_rational.denominator
-    max_iterations = 100
+    max_iterations = 1000
     current_test = current_numerator.to_f/current_denominator
     (1..max_iterations).each do
       if current_test < a
@@ -97,10 +97,10 @@ class IrrationalsController < ApplicationController
         min_tolerance = test_tolerance
         min_numerator = current_numerator
         min_denominator = current_denominator
+        Fraction.create(numerator: min_numerator, denominator: min_denominator, error: min_tolerance, irrational_id: @irrational.id)
       end
     end
-
-    @irrational.fractions.create(numerator: min_numerator, denominator: min_denominator, error: min_tolerance)
+    #Fraction.create(numerator: min_numerator, denominator: min_denominator, error: min_tolerance, irrational_id: @irrational.id)
   end
 
   private
