@@ -17,9 +17,9 @@
     <% @irrationals.each do |irrational| %>
       <tr>
         <td><%= link_to irrational.id, irrational_path(irrational) %></td>
-        <td><%= irrational.input %></td>
-        <td><%= irrational.exact_numerator.to_i %></td>
-        <td><%= irrational.exact_denominator.to_i %></td>
+        <td><%= pretty_print_int(irrational.input) %></td>
+        <td><%= pretty_print_int(irrational.exact_numerator) %></td>
+        <td><%= pretty_print_int(irrational.exact_denominator) %></td>
         <td><%=l irrational.created_at %></td>
         <td>
           <%= link_to t('.edit', :default => t("helpers.links.edit")),

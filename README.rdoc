@@ -9,5 +9,5 @@ As an example the ideal behavior would be to convert something like
 
 The current app is available for usage at http://irrational-mind.herokuapp.com
 
-Using Rails 4.0.2 and Ruby 2.1.0
+Using Rails 4.0.2 and Ruby 2.0.0
 

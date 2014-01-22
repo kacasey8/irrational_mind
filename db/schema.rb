@@ -11,21 +11,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140122071057) do
+ActiveRecord::Schema.define(version: 20140122190819) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "fractions", force: true do |t|
-    t.integer  "irrational_id"
-    t.integer  "numerator"
-    t.integer  "denominator"
-    t.decimal  "error"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "frations", force: true do |t|
     t.integer  "irrational_id"
     t.integer  "numerator"
     t.integer  "denominator"
@@ -40,6 +31,15 @@ ActiveRecord::Schema.define(version: 20140122071057) do
     t.datetime "updated_at"
     t.decimal  "exact_numerator"
     t.decimal  "exact_denominator"
+  end
+
+  create_table "pi_fractions", force: true do |t|
+    t.integer  "numerator"
+    t.integer  "denominator"
+    t.decimal  "error"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "irrational_id"
   end
 
 end

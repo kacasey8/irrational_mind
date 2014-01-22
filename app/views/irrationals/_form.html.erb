@@ -1,4 +1,11 @@
 <%= form_for @irrational, :html => { :class => 'form-horizontal' } do |f| %>
+  <% if @irrational.errors.any? %>
+    <div class='alert alert-danger'>
+      <% @irrational.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </div>
+  <% end %>
   <div class="control-group">
     <%= f.label :input, :class => 'control-label' %>
     <div class="controls">

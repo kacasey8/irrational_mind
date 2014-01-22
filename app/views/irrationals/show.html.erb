@@ -12,10 +12,23 @@
   <dt><strong><%= model_class.human_attribute_name(:fractions) %>:</strong></dt>
   <% @irrational.fractions.each do |fraction| %>
     <dd>
-      <%= @irrational.input.to_i %> 
+      <%= @irrational.input.to_i if @irrational.input.to_i != 0 %> 
       <sup><%= fraction.numerator %></sup>
       &frasl;
       <sub><%= fraction.denominator %></sub>
+      <% sign, significant_digits, base, exponent = fraction.error.split %>
+      <% unless significant_digits == "0" %>
+        <span style='padding-left: 20px;'>Error: <%= base %><sup><%= exponent %></sup></span>
+      <% end %>
+    </dd>
+  <% end %>
+
+  <dt><strong><%= model_class.human_attribute_name(:pi_fractions) %>:</strong></dt>
+  <% @irrational.pi_fractions.each do |fraction| %>
+    <dd>
+      <sup><%= fraction.numerator %></sup>
+      &frasl;
+      <sub><%= fraction.denominator %></sub>&pi;
       <% sign, significant_digits, base, exponent = fraction.error.split %>
       <% unless significant_digits == "0" %>
         <span style='padding-left: 20px;'>Error: <%= base %><sup><%= exponent %></sup></span>

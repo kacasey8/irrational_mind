@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby "2.1.0"
+ruby "2.0.0"
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.0.2'
@@ -30,8 +30,12 @@ gem 'turbolinks'
 gem 'jbuilder', '~> 1.2'
 
 gem 'annotate'
-gem 'debugger'
 gem 'twitter-bootstrap-rails', :git => 'git://github.com/seyhunak/twitter-bootstrap-rails.git'
+
+group :development, :test do
+  gem 'rspec-rails', '~> 3.0.0.beta'
+  gem 'debugger'
+end
 
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.

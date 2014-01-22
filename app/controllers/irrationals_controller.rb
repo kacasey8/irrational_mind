@@ -27,7 +27,8 @@ class IrrationalsController < ApplicationController
     @irrational = Irrational.new(irrational_params)
 
     set_exact
-    implant_fractions
+    implant_fractions(Fraction, @irrational.input.frac, 10000)
+    implant_fractions(PiFraction, @irrational.input/pi, 10000)
     respond_to do |format|
       if @irrational.save
         format.html { redirect_to @irrational, notice: 'Irrational was successfully created.' }
@@ -45,7 +46,8 @@ class IrrationalsController < ApplicationController
     respond_to do |format|
       if @irrational.update(irrational_params)
         set_exact
-        implant_fractions
+        implant_fractions(Fraction, @irrational.input.frac, 10000)
+        implant_fractions(PiFraction, @irrational.input/Math::PI, 10000)
         format.html { redirect_to @irrational, notice: 'Irrational was successfully updated.' }
         format.json { head :no_content }
       else
@@ -73,27 +75,25 @@ class IrrationalsController < ApplicationController
     @irrational.save
   end
 
-  def implant_fractions
-    @irrational.fractions.delete_all # clear out potentially old data
-    a = @irrational.input.frac
+  def implant_fractions(model, value, max_iterations)
+    model.where(irrational_id: @irrational.id).delete_all # clear out potentially old data
     min_rational = 0.to_r
-    min_tolerance = (min_rational - a).abs
+    min_tolerance = (min_rational - value).abs
     current_numerator = min_rational.numerator
     current_denominator = min_rational.denominator
 
     min_numerator = min_rational.numerator
     min_denominator = min_rational.denominator
-    max_iterations = 10000
     current_test = current_numerator.to_f/current_denominator
     seen_significance = -1
     (1..max_iterations).each do
-      if current_test < a
+      if current_test < value
         current_numerator += 1
       else
         current_denominator += 1
       end
       current_test = current_numerator.to_f/current_denominator
-      test_tolerance = (current_test - a).abs
+      test_tolerance = (current_test - value).abs.to_d
       if test_tolerance < min_tolerance # found a closer value
         min_rational = current_test
         min_tolerance = test_tolerance
@@ -101,9 +101,9 @@ class IrrationalsController < ApplicationController
         min_denominator = current_denominator
         sign, significant_digits, base, exponent = test_tolerance.split
         if significant_digits == "0"  # perfect match
-          return Fraction.create(numerator: min_numerator, denominator: min_denominator, error: min_tolerance, irrational_id: @irrational.id)
+          return model.create(numerator: min_numerator, denominator: min_denominator, error: min_tolerance, irrational_id: @irrational.id)
         elsif exponent < seen_significance # a match on a better magnitude, record this fit
-          Fraction.create(numerator: min_numerator, denominator: min_denominator, error: min_tolerance, irrational_id: @irrational.id)
+          model.create(numerator: min_numerator, denominator: min_denominator, error: min_tolerance, irrational_id: @irrational.id)
           seen_significance = exponent
         end
       end
