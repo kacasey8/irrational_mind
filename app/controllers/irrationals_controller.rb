@@ -83,9 +83,9 @@ class IrrationalsController < ApplicationController
 
     min_numerator = min_rational.numerator
     min_denominator = min_rational.denominator
-    max_iterations = 1000
+    max_iterations = 10000
     current_test = current_numerator.to_f/current_denominator
-    seen_significance = -2
+    seen_significance = -1
     (1..max_iterations).each do
       if current_test < a
         current_numerator += 1
@@ -101,8 +101,7 @@ class IrrationalsController < ApplicationController
         min_denominator = current_denominator
         sign, significant_digits, base, exponent = test_tolerance.split
         if significant_digits == "0"  # perfect match
-          Fraction.create(numerator: min_numerator, denominator: min_denominator, error: min_tolerance, irrational_id: @irrational.id)
-          return
+          return Fraction.create(numerator: min_numerator, denominator: min_denominator, error: min_tolerance, irrational_id: @irrational.id)
         elsif exponent < seen_significance # a match on a better magnitude, record this fit
           Fraction.create(numerator: min_numerator, denominator: min_denominator, error: min_tolerance, irrational_id: @irrational.id)
           seen_significance = exponent
