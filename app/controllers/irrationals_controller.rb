@@ -27,7 +27,7 @@ class IrrationalsController < ApplicationController
     @irrational = Irrational.new(irrational_params)
 
     set_exact
-    find_fractions
+    implant_fractions
     respond_to do |format|
       if @irrational.save
         format.html { redirect_to @irrational, notice: 'Irrational was successfully created.' }
@@ -45,7 +45,7 @@ class IrrationalsController < ApplicationController
     respond_to do |format|
       if @irrational.update(irrational_params)
         set_exact
-        find_fractions
+        implant_fractions
         format.html { redirect_to @irrational, notice: 'Irrational was successfully updated.' }
         format.json { head :no_content }
       else
@@ -73,7 +73,8 @@ class IrrationalsController < ApplicationController
     @irrational.save
   end
 
-  def find_fractions
+  def implant_fractions
+    @irrational.fractions.delete_all # clear out potentially old data
     a = @irrational.input.frac
     min_rational = 0.to_r
     min_tolerance = (min_rational - a).abs
@@ -84,6 +85,7 @@ class IrrationalsController < ApplicationController
     min_denominator = min_rational.denominator
     max_iterations = 1000
     current_test = current_numerator.to_f/current_denominator
+    seen_significance = -2
     (1..max_iterations).each do
       if current_test < a
         current_numerator += 1
@@ -97,10 +99,16 @@ class IrrationalsController < ApplicationController
         min_tolerance = test_tolerance
         min_numerator = current_numerator
         min_denominator = current_denominator
-        Fraction.create(numerator: min_numerator, denominator: min_denominator, error: min_tolerance, irrational_id: @irrational.id)
+        sign, significant_digits, base, exponent = test_tolerance.split
+        if significant_digits == "0"  # perfect match
+          Fraction.create(numerator: min_numerator, denominator: min_denominator, error: min_tolerance, irrational_id: @irrational.id)
+          return
+        elsif exponent < seen_significance # a match on a better magnitude, record this fit
+          Fraction.create(numerator: min_numerator, denominator: min_denominator, error: min_tolerance, irrational_id: @irrational.id)
+          seen_significance = exponent
+        end
       end
     end
-    #Fraction.create(numerator: min_numerator, denominator: min_denominator, error: min_tolerance, irrational_id: @irrational.id)
   end
 
   private
