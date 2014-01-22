@@ -28,7 +28,7 @@ class IrrationalsController < ApplicationController
 
     set_exact
     implant_fractions(Fraction, @irrational.input.frac, 10000)
-    implant_fractions(PiFraction, @irrational.input/pi, 10000)
+    implant_fractions(PiFraction, @irrational.input/Math::PI, 10000)
     respond_to do |format|
       if @irrational.save
         format.html { redirect_to @irrational, notice: 'Irrational was successfully created.' }
