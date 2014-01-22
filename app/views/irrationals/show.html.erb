@@ -1,0 +1,28 @@
+<%- model_class = Irrational -%>
+<div class="page-header">
+  <h1><%=t '.title', :default => model_class.model_name.human.titleize %></h1>
+</div>
+
+<dl class="dl-horizontal">
+  <dt><strong><%= model_class.human_attribute_name(:input) %>:</strong></dt>
+  <dd><%= @irrational.input %></dd>
+  <dt><strong>Exact Value:</strong></dt>
+  <dd><%= @irrational.exact_numerator %>/<%= @irrational.exact_denominator %></dd>
+
+  <dt><strong><%= model_class.human_attribute_name(:fractions) %>:</strong></dt>
+  <% @irrational.fractions.each do |fraction| %>
+  	<dd><%= fraction.numerator %>/<%= fraction.denominator %></dd>
+  <% end %>
+</dl>
+
+<div class="form-actions">
+  <%= link_to t('.back', :default => t("helpers.links.back")),
+              irrationals_path, :class => 'btn'  %>
+  <%= link_to t('.edit', :default => t("helpers.links.edit")),
+              edit_irrational_path(@irrational), :class => 'btn' %>
+  <%= link_to t('.destroy', :default => t("helpers.links.destroy")),
+              irrational_path(@irrational),
+              :method => 'delete',
+              :data => { :confirm => t('.confirm', :default => t("helpers.links.confirm", :default => 'Are you sure?')) },
+              :class => 'btn btn-danger' %>
+</div>
