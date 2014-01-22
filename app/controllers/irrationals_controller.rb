@@ -26,10 +26,13 @@ class IrrationalsController < ApplicationController
   def create
     @irrational = Irrational.new(irrational_params)
 
-    set_exact
-    implant_fractions(Fraction, @irrational.input.frac, 10000)
-    implant_fractions(PiFraction, @irrational.input/Math::PI, 10000)
-    implant_sqrt
+    if @irrational.valid?
+      set_exact
+      implant_fractions(Fraction, @irrational.input.frac, 10000)
+      implant_fractions(PiFraction, @irrational.input/Math::PI, 10000)
+      implant_fractions_and_function(SqrtFraction, Proc.new { |x| Math.sqrt(x) }, :root, 2)
+      implant_fractions_and_function(EFraction, Proc.new { |x| Math::E ** x }, :power, 1)
+    end
     respond_to do |format|
       if @irrational.save
         format.html { redirect_to @irrational, notice: 'Irrational was successfully created.' }
@@ -46,10 +49,13 @@ class IrrationalsController < ApplicationController
   def update
     respond_to do |format|
       if @irrational.update(irrational_params)
-        set_exact
-        implant_fractions(Fraction, @irrational.input.frac, 10000)
-        implant_fractions(PiFraction, @irrational.input/Math::PI, 1000)
-        implant_sqrt
+        if @irrational.valid?
+          set_exact
+          implant_fractions(Fraction, @irrational.input.frac, 10000)
+          implant_fractions(PiFraction, @irrational.input/Math::PI, 1000)
+          implant_fractions_and_function(SqrtFraction, Proc.new { |x| Math.sqrt(x) }, :root, 2)
+          implant_fractions_and_function(EFraction, Proc.new { |x| Math::E ** x }, :power, 1)
+        end
         format.html { redirect_to @irrational, notice: 'Irrational was successfully updated.' }
         format.json { head :no_content }
       else
@@ -70,7 +76,6 @@ class IrrationalsController < ApplicationController
   end
 
   def set_exact
-    return unless @irrational.valid?
     a = @irrational.input.frac
     @irrational.exact_numerator = a.numerator + @irrational.input.to_i * a.denominator
     @irrational.exact_denominator = a.denominator
@@ -105,19 +110,18 @@ class IrrationalsController < ApplicationController
     end
   end
 
-  def implant_sqrt
+  def implant_fractions_and_function(model, function, name, start)
     max_iterations = 100
     max_inner = 100
 
-    SqrtFraction.where(irrational_id: @irrational.id).delete_all # clear out potentially old data
-    model = SqrtFraction
+    model.where(irrational_id: @irrational.id).delete_all # clear out potentially old data
 
     min_tolerance = 0.1
     seen_significance = -1
-    (2..max_iterations).each do |root_test|
+    (start..max_iterations).each do |root_test|
       current_numerator = 0
       current_denominator = 1
-      root_value = Math.sqrt(root_test)
+      root_value = function.call(root_test)
       match_value = @irrational.input/root_value
       current_test = current_numerator.to_f/current_denominator
       (1..max_inner).each do
@@ -132,9 +136,9 @@ class IrrationalsController < ApplicationController
           min_tolerance = test_tolerance
           sign, significant_digits, base, exponent = test_tolerance.split
           if significant_digits == "0"  # perfect match
-            return model.create(root: root_test, numerator: current_numerator, denominator: current_denominator, error: min_tolerance, irrational_id: @irrational.id)
+            return model.create(name.to_sym => root_test, numerator: current_numerator, denominator: current_denominator, error: min_tolerance, irrational_id: @irrational.id)
           elsif exponent < seen_significance # a match on a better magnitude, record this fit
-            model.create(root: root_test, numerator: current_numerator, denominator: current_denominator, error: min_tolerance, irrational_id: @irrational.id)
+            model.create(name.to_sym => root_test, numerator: current_numerator, denominator: current_denominator, error: min_tolerance, irrational_id: @irrational.id)
             seen_significance = exponent
           end
         end

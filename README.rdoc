@@ -10,7 +10,7 @@ As an example the ideal behavior would be to convert something like
 fractions           [decent]
 pi fractions        [decent]
 sqrt fractions      [decent]
-e                   []
+e                   [decent]
 exponentiation      []
 log                 []
 

@@ -13,9 +13,10 @@
   <% @irrational.fractions.each do |fraction| %>
     <dd>
       <%= @irrational.input.to_i if @irrational.input.to_i != 0 %> 
-      <sup><%= fraction.numerator %></sup>
-      &frasl;
-      <sub><%= fraction.denominator %></sub>
+      <% unless fraction.denominator == 1 && fraction.numerator == 1 %>
+        <sup><%= fraction.numerator %></sup>
+        &frasl;<sub><%= fraction.denominator %></sub>
+      <% end %>
       <% sign, significant_digits, base, exponent = fraction.error.split %>
       <% unless significant_digits == "0" %>
         <span style='padding-left: 20px;'>Error: <%= base %><sup><%= exponent %></sup></span>
@@ -26,9 +27,11 @@
   <dt><strong><%= model_class.human_attribute_name(:pi_fractions) %>:</strong></dt>
   <% @irrational.pi_fractions.each do |fraction| %>
     <dd>
-      <sup><%= fraction.numerator %></sup>
-      &frasl;
-      <sub><%= fraction.denominator %></sub>&nbsp;&pi;
+      <% unless fraction.denominator == 1 && fraction.numerator == 1 %>
+        <sup><%= fraction.numerator %></sup>
+        &frasl;<sub><%= fraction.denominator %></sub>
+      <% end %>
+      &nbsp;&pi;
       <% sign, significant_digits, base, exponent = fraction.error.split %>
       <% unless significant_digits == "0" %>
         <span style='padding-left: 20px;'>Error: <%= base %><sup><%= exponent %></sup></span>
@@ -44,6 +47,21 @@
         &frasl;<sub><%= fraction.denominator %></sub>
       <% end %>
       &nbsp;&radic;<span style="text-decoration:overline;">&nbsp;<%= fraction.root %>&nbsp;</span>
+      <% sign, significant_digits, base, exponent = fraction.error.split %>
+      <% unless significant_digits == "0" %>
+        <span style='padding-left: 20px;'>Error: <%= base %><sup><%= exponent %></sup></span>
+      <% end %>
+    </dd>
+  <% end %>
+
+  <dt><strong><%= model_class.human_attribute_name(:e_fractions) %>:</strong></dt>
+  <% @irrational.e_fractions.each do |fraction| %>
+    <dd>
+      <% unless fraction.denominator == 1 && fraction.numerator == 1 %>
+        <sup><%= fraction.numerator %></sup>
+        &frasl;<sub><%= fraction.denominator %></sub>
+      <% end %>
+      &nbsp;e<sup><%= fraction.power %></sup>
       <% sign, significant_digits, base, exponent = fraction.error.split %>
       <% unless significant_digits == "0" %>
         <span style='padding-left: 20px;'>Error: <%= base %><sup><%= exponent %></sup></span>
