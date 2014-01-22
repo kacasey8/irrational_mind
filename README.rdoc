@@ -7,6 +7,14 @@ numbers.
 As an example the ideal behavior would be to convert something like 
 0.39269908169 => pi/8
 
+fractions           [decent]
+pi fractions        [decent]
+sqrt fractions      [decent]
+e                   []
+exponentiation      []
+log                 []
+
+
 The current app is available for usage at http://irrational-mind.herokuapp.com
 
 Using Rails 4.0.2 and Ruby 2.0.0
