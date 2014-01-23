@@ -10,6 +10,7 @@ class IrrationalsController < ApplicationController
   # GET /irrationals/1
   # GET /irrationals/1.json
   def show
+    @frac_types = [:fractions, :pi_fractions, :sqrt_fractions, :e_fractions]
   end
 
   # GET /irrationals/new

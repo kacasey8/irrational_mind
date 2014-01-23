@@ -9,80 +9,35 @@
   <dt><strong>Exact Value:</strong></dt>
   <dd><%= @irrational.exact_numerator.to_i %>/<%= @irrational.exact_denominator.to_i %></dd>
 
-  <dt><strong><%= model_class.human_attribute_name(:fractions) %>:</strong></dt>
-  <% @irrational.fractions.each do |fraction| %>
-    <dd>
-      <%= @irrational.input.to_i if @irrational.input.to_i != 0 %> 
-      <% unless fraction.denominator == 1 && fraction.numerator == 1 %>
-        <% if fraction.denominator == 1 %>
-          <%= fraction.numerator %>
-        <% else %>
-          <sup><%= fraction.numerator %></sup>
-          &frasl;<sub><%= fraction.denominator %></sub>
+  <% @frac_types.each do |type| %>
+    <dt><strong><%= model_class.human_attribute_name(type) %>:</strong></dt>
+    <% @irrational.send(type).each do |fraction| %>
+      <dd>
+        <%= @irrational.input.to_i if @irrational.input.to_i != 0 && type == :fractions %> 
+        <% unless fraction.denominator == 1 && fraction.numerator == 1 %>
+          <% if fraction.denominator == 1 %>
+            <%= fraction.numerator %>
+          <% else %>
+            <sup><%= fraction.numerator %></sup>
+            &frasl;<sub><%= fraction.denominator %></sub>
+          <% end %>
         <% end %>
-      <% end %>
-      <% sign, significant_digits, base, exponent = fraction.error.split %>
-      <% unless significant_digits == "0" %>
-        <span style='padding-left: 20px;'>Error: <%= base %><sup><%= exponent %></sup></span>
-      <% end %>
-    </dd>
-  <% end %>
-
-  <dt><strong><%= model_class.human_attribute_name(:pi_fractions) %>:</strong></dt>
-  <% @irrational.pi_fractions.each do |fraction| %>
-    <dd>
-      <% unless fraction.denominator == 1 && fraction.numerator == 1 %>
-        <% if fraction.denominator == 1 %>
-          <%= fraction.numerator %>
-        <% else %>
-          <sup><%= fraction.numerator %></sup>
-          &frasl;<sub><%= fraction.denominator %></sub>
+        <% if type == :sqrt_fractions %>
+          &radic;<span style="text-decoration:overline;">&nbsp;<%= fraction.root %>&nbsp;</span>
+        <% elsif type == :pi_fractions %>
+          &pi;
+        <% elsif type == :e_fractions %>
+          e<sup><%= fraction.power unless fraction.power == 1 %></sup>
         <% end %>
-      <% end %>
-      &nbsp;&pi;
-      <% sign, significant_digits, base, exponent = fraction.error.split %>
-      <% unless significant_digits == "0" %>
-        <span style='padding-left: 20px;'>Error: <%= base %><sup><%= exponent %></sup></span>
-      <% end %>
-    </dd>
-  <% end %>
-
-  <dt><strong><%= model_class.human_attribute_name(:sqrt_fractions) %>:</strong></dt>
-  <% @irrational.sqrt_fractions.each do |fraction| %>
-    <dd>
-      <% unless fraction.denominator == 1 && fraction.numerator == 1 %>
-        <% if fraction.denominator == 1 %>
-          <%= fraction.numerator %>
-        <% else %>
-          <sup><%= fraction.numerator %></sup>
-          &frasl;<sub><%= fraction.denominator %></sub>
+        <% sign, significant_digits, base, exponent = fraction.error.split %>
+        <% unless significant_digits == "0" %>
+          <span style='padding-left: 20px;'>Error: <%= base %><sup><%= exponent %></sup></span>
         <% end %>
-      <% end %>
-      &nbsp;&radic;<span style="text-decoration:overline;">&nbsp;<%= fraction.root %>&nbsp;</span>
-      <% sign, significant_digits, base, exponent = fraction.error.split %>
-      <% unless significant_digits == "0" %>
-        <span style='padding-left: 20px;'>Error: <%= base %><sup><%= exponent %></sup></span>
-      <% end %>
-    </dd>
-  <% end %>
-
-  <dt><strong><%= model_class.human_attribute_name(:e_fractions) %>:</strong></dt>
-  <% @irrational.e_fractions.each do |fraction| %>
-    <dd>
-      <% unless fraction.denominator == 1 && fraction.numerator == 1 %>
-        <% if fraction.denominator == 1 %>
-          <%= fraction.numerator %>
-        <% else %>
-          <sup><%= fraction.numerator %></sup>
-          &frasl;<sub><%= fraction.denominator %></sub>
-        <% end %>
-      <% end %>
-      &nbsp;e<sup><%= fraction.power unless fraction.power == 1 %></sup>
-      <% sign, significant_digits, base, exponent = fraction.error.split %>
-      <% unless significant_digits == "0" %>
-        <span style='padding-left: 20px;'>Error: <%= base %><sup><%= exponent %></sup></span>
-      <% end %>
-    </dd>
+      </dd>
+    <% end %>
+    <% if @irrational.send(type).nil? %>
+      <dd>No <%= type %> available </dd>
+    <% end %>
   <% end %>
 </dl>
 
