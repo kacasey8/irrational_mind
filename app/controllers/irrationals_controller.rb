@@ -111,8 +111,8 @@ class IrrationalsController < ApplicationController
   end
 
   def implant_fractions_and_function(model, function, name, start)
-    max_iterations = 100
-    max_inner = 100
+    max_iterations = 50
+    max_inner = 10
 
     model.where(irrational_id: @irrational.id).delete_all # clear out potentially old data
 
